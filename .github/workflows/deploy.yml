@@ -28,7 +28,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: worker
+          command: deploy index.js
         env:
-          # 你可以在 wrangler.toml 里用 ${BUCKET_NAME} 变量引用
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
           API_DOMAIN: ${{ secrets.API_DOMAIN }}
