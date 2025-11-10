@@ -255,24 +255,32 @@
 
       // filter - mobile menu
       if (filterMenuBtn && filterMenu) {
-        filterMenuBtn.addEventListener('click', (e) => {
-          const open = filterMenu.style.display === 'flex';
-          filterMenu.style.display = open ? 'none' : 'flex';
-          filterMenuBtn.setAttribute('aria-expanded', (!open).toString());
-        });
+        // ensure closed by default
+        filterMenu.classList.remove('open');
+        filterMenuBtn.setAttribute('aria-expanded', 'false');
+        // toggle with class to improve responsiveness
+        const toggleFilterMenu = (e) => {
+          e && e.stopPropagation();
+          const isOpen = filterMenu.classList.toggle('open');
+          filterMenuBtn.setAttribute('aria-expanded', isOpen.toString());
+        };
+        filterMenuBtn.addEventListener('click', toggleFilterMenu);
+        // support touchstart for better responsiveness on mobile
+        filterMenuBtn.addEventListener('touchstart', (e) => { e.preventDefault(); toggleFilterMenu(e); });
         const items = filterMenu.querySelectorAll('.fm-item');
         items.forEach(it => {
-          it.addEventListener('click', () => {
+          it.addEventListener('click', (e) => {
+            e.stopPropagation();
             filterMode = it.dataset.filter;
-            // reflect on desktop segmented if present
             if (filterControl) {
               filterControl.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.filter === filterMode));
             }
             localStorage.setItem('praise_filterMode', filterMode);
             applyFiltersAndSearch(); renderList();
-            filterMenu.style.display = 'none';
+            filterMenu.classList.remove('open');
             filterMenuBtn.setAttribute('aria-expanded', 'false');
           });
+          it.addEventListener('touchstart', (e) => { e.stopPropagation(); });
         });
       }
 
@@ -304,17 +312,26 @@
 
       // search FAB behavior for mobile
       if (searchFab && searchOverlay && searchInputMobile && searchBack) {
-        searchFab.addEventListener('click', () => {
-          searchOverlay.style.display = 'flex';
+        // ensure closed by default
+        searchOverlay.classList.remove('open');
+        searchFab.classList.remove('hidden');
+        const openSearch = (e) => {
+          e && e.stopPropagation();
+          searchOverlay.classList.add('open');
           searchOverlay.setAttribute('aria-hidden', 'false');
-          searchFab.style.display = 'none';
+          searchFab.classList.add('hidden');
           setTimeout(() => searchInputMobile.focus(), 50);
-        });
-        searchBack.addEventListener('click', () => {
-          searchOverlay.style.display = 'none';
+        };
+        const closeSearch = (e) => {
+          e && e.stopPropagation();
+          searchOverlay.classList.remove('open');
           searchOverlay.setAttribute('aria-hidden', 'true');
-          searchFab.style.display = 'flex';
-        });
+          searchFab.classList.remove('hidden');
+        };
+        searchFab.addEventListener('click', openSearch);
+        searchFab.addEventListener('touchstart', (e) => { e.preventDefault(); openSearch(e); });
+        searchBack.addEventListener('click', closeSearch);
+        searchBack.addEventListener('touchstart', (e) => { e.preventDefault(); closeSearch(e); });
       }
       // keyboard shortcut: '/' focus - open mobile overlay if needed
       document.addEventListener('keydown', (e) => {
@@ -326,13 +343,26 @@
           }
         }
       });
-      // click outside to close mobile menus/search overlay
+      // click outside to close mobile menus/search overlay (use class-based checks)
       document.addEventListener('click', (e) => {
-        if (filterMenu && filterMenu.style.display === 'flex' && !filterMenu.contains(e.target) && e.target !== filterMenuBtn) {
-          filterMenu.style.display = 'none'; filterMenuBtn.setAttribute('aria-expanded', 'false');
+        if (filterMenu && filterMenu.classList.contains('open') && !filterMenu.contains(e.target) && e.target !== filterMenuBtn) {
+          filterMenu.classList.remove('open'); filterMenuBtn.setAttribute('aria-expanded', 'false');
         }
-        if (searchOverlay && searchOverlay.style.display === 'flex' && !searchOverlay.contains(e.target) && e.target !== searchFab) {
-          searchOverlay.style.display = 'none'; searchOverlay.setAttribute('aria-hidden', 'true'); searchFab.style.display = 'flex';
+        if (searchOverlay && searchOverlay.classList.contains('open') && !searchOverlay.contains(e.target) && e.target !== searchFab) {
+          searchOverlay.classList.remove('open'); searchOverlay.setAttribute('aria-hidden', 'true'); searchFab.classList.remove('hidden');
+        }
+      });
+      // close overlays with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (filterMenu && filterMenu.classList.contains('open')) {
+            filterMenu.classList.remove('open'); filterMenuBtn.setAttribute('aria-expanded', 'false');
+          }
+          if (searchOverlay && searchOverlay.classList.contains('open')) {
+            searchOverlay.classList.remove('open'); searchOverlay.setAttribute('aria-hidden', 'true'); searchFab.classList.remove('hidden');
+          }
+          if (recentListPanel && recentListPanel.classList.contains('show')) recentListPanel.classList.remove('show');
+          if (timerPanel && timerPanel.classList.contains('show')) timerPanel.classList.remove('show');
         }
       });
     }

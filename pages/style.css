@@ -26,13 +26,16 @@
   .desktop-only { display:inline-flex; }
 
   /* filter popup for mobile */
-  .filter-menu { position:fixed; top:56px; right:12px; background:var(--card); border:1px solid #e6e6e6; border-radius:8px; padding:6px 8px; box-shadow:0 6px 20px rgba(0,0,0,0.12); z-index:1200; display:none; flex-direction:column; }
+  .filter-menu { position:fixed; top:56px; right:12px; background:var(--card); border:1px solid #e6e6e6; border-radius:8px; padding:6px 8px; box-shadow:0 6px 20px rgba(0,0,0,0.12); z-index:1200; display:none; flex-direction:column; pointer-events:auto; }
+  .filter-menu.open { display:flex; }
   .filter-menu .fm-item { padding:8px 12px; border:none; background:transparent; text-align:left; font-size:14px; color:#111; cursor:pointer; }
   .filter-menu .fm-item:hover { background:#f6f9ff; color:var(--accent); }
 
   /* search FAB and overlay for mobile */
-  .search-fab { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:16px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.7); backdrop-filter:blur(6px); border:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; z-index:1300; }
-  .search-overlay { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:16px; display:none; align-items:center; gap:8px; padding:6px 8px; border-radius:24px; background:rgba(255,255,255,0.95); box-shadow:0 8px 30px rgba(0,0,0,0.12); z-index:1300; }
+  .search-fab { position:fixed; top:calc(16px + env(safe-area-inset-top)); right:16px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.7); backdrop-filter:blur(6px); border:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; z-index:1300; }
+  .search-fab.hidden { display:none; }
+  .search-overlay { position:fixed; top:calc(16px + env(safe-area-inset-top)); right:16px; display:none; align-items:center; gap:8px; padding:6px 8px; border-radius:24px; background:rgba(255,255,255,0.95); box-shadow:0 8px 30px rgba(0,0,0,0.12); z-index:1300; }
+  .search-overlay.open { display:flex; }
   .search-overlay input { width:220px; padding:8px 10px; border-radius:16px; border:1px solid #e6e6e6; outline:none; }
 
   .menu button { background:var(--card); border:1px solid #e5e7eb; padding:8px 12px; border-radius:8px; cursor:pointer; }

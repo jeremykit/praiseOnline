@@ -47,8 +47,11 @@
       <!-- Mobile search FAB -->
       <button id="searchFab" class="search-fab mobile-only" title="搜索">🔍</button>
       <div id="searchOverlay" class="search-overlay mobile-only" aria-hidden="true">
-        <button id="searchBack" class="icon-btn" title="返回">←</button>
         <input id="searchInputMobile" type="search" placeholder="搜索歌曲或编号" aria-label="搜索歌曲或编号" />
+        <button id="searchBack" class="icon-btn" title="返回">
+          <!-- curved return arrow -->
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20 11c0 4.418-3.582 8-8 8-1.657 0-3.182-.484-4.472-1.31l1.06-1.48C10.4 17.64 11.638 18 12.999 18c3.866 0 7-3.134 7-7 0-1.361-.36-2.6-1.79-3.413l1.06-1.48C19.516 6.818 20 8.343 20 10zM7.41 8.59L6 10l4 4 1.41-1.41L9.83 11H17V9H9.83l-2.42-2.41z"/></svg>
+        </button>
       </div>
 
       <div id="listCount" class="list-count" aria-hidden="true">--</div>
