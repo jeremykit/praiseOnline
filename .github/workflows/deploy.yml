@@ -15,13 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Replace __BUCKET_NAME__ in wrangler.toml
+      # 替换所有配置占位符
+      - name: Replace placeholders in configuration
         run: |
+          # 替换 wrangler.toml 中的配置
           sed -i "s|__BUCKET_NAME__|${{ secrets.BUCKET_NAME }}|g" worker/wrangler.toml
-      
-      - name: Replace __API_BASE__ in index.html
-        run: |
+          sed -i "s|__API_DOMAIN__|${{ secrets.API_DOMAIN }}|g" worker/wrangler.toml
+          sed -i "s|__ZONE_NAME__|${{ secrets.ZONE_NAME }}|g" worker/wrangler.toml
+          
+          # 替换 pages/index.html 中的 API_BASE
           sed -i "s|__API_BASE__|${{ secrets.API_DOMAIN }}|g" pages/index.html
+      
+      # 安装最新版本的 wrangler
+      - name: Setup Node.js and Wrangler
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g wrangler@latest
 
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
@@ -29,7 +39,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
-          command: deploy index.js
-        env:
-          BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-          API_DOMAIN: ${{ secrets.API_DOMAIN }}
+          command: deploy --minify index.js
