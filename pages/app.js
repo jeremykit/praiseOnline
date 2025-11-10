@@ -29,6 +29,11 @@
     const playIcon = playPauseBtn.querySelector('.play-icon');
     const pauseIcon = playPauseBtn.querySelector('.pause-icon');
     const progressFill = document.querySelector('.progress-fill');
+    // Controls
+    const filterControl = document.getElementById('filterControl');
+    const sortToggleBtn = document.getElementById('sortToggleBtn');
+    const searchInput = document.getElementById('searchInput');
+    const listCountEl = document.getElementById('listCount');
   
     // Worker API 域名：从页面 meta 标签读取，若未设置则回退到默认
     // 请在 `pages/index.html` 中添加：<meta name="api-base" content="__API_BASE__" />
@@ -137,6 +142,21 @@
       }
     });
   
+    // state for filtering/search
+    let originalSongs = [];
+    let filterMode = localStorage.getItem('praise_filterMode') || 'all';
+    reverseOrder = (localStorage.getItem('praise_reverseOrder') === 'true') || false;
+    let searchQuery = localStorage.getItem('praise_searchQuery') || '';
+
+    // debounce helper
+    function debounce(fn, wait) {
+      let t;
+      return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    }
+
     async function loadList(dir) {
       currentDir = dir;
       const res = await fetch(`${API_BASE}/api/list?dir=${encodeURIComponent(dir)}`);
@@ -145,11 +165,51 @@
         return;
       }
       const data = await res.json();
-      songs = Array.isArray(data.songs) ? data.songs.slice() : [];
-      if (reverseOrder) songs.reverse();
+      originalSongs = Array.isArray(data.songs) ? data.songs.slice() : [];
+      // reset local storage on each new fetch
+      localStorage.setItem('praise_filterMode', filterMode);
+      localStorage.setItem('praise_reverseOrder', reverseOrder);
+      localStorage.setItem('praise_searchQuery', searchQuery);
+      applyFiltersAndSearch();
       if (currentKey) currentIndex = songs.findIndex(s => s.key === currentKey);
       else currentIndex = -1;
       renderList();
+    }
+
+    function normalizeNameForMatch(name) {
+      if (!name) return '';
+      // remove extension and trim
+      const withoutExt = name.replace(/\.[^/.]+$/, '');
+      return withoutExt.toLowerCase();
+    }
+
+    function matchesChorus(name) {
+      const n = normalizeNameForMatch(name);
+      return n.endsWith('-合');
+    }
+
+    function applyFiltersAndSearch() {
+      let list = originalSongs.slice();
+      // filter
+      if (filterMode === 'only_chorus') {
+        list = list.filter(s => matchesChorus(s.name));
+      } else if (filterMode === 'exclude_chorus') {
+        list = list.filter(s => !matchesChorus(s.name));
+      }
+      // search
+      const q = (searchQuery || '').trim().toLowerCase();
+      if (q) {
+        list = list.filter(s => {
+          const name = (s.name || '').toLowerCase();
+          const key = (s.key || '').toLowerCase();
+          return name.includes(q) || key.includes(q);
+        });
+      }
+      // sort (reverseOrder toggles)
+      if (reverseOrder) list.reverse();
+      songs = list;
+      // update count
+      listCountEl.textContent = `${songs.length} / ${originalSongs.length}`;
     }
   
     function renderList() {
@@ -157,9 +217,54 @@
       songs.forEach((s, idx) => {
         const li = document.createElement('li');
         li.className = 'song-item' + (idx === currentIndex ? ' playing' : '');
-        li.innerHTML = `<div class="song-name">${escapeHtml(formatSongName(s.key, s.name))}</div>`;
+        // highlight search matches
+        let display = escapeHtml(formatSongName(s.key, s.name));
+        const q = (searchQuery || '').trim();
+        if (q) {
+          const regex = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+          display = display.replace(regex, '<mark class="search-hit">$1</mark>');
+        }
+        li.innerHTML = `<div class="song-name">${display}</div>`;
         li.onclick = () => playByIndex(idx);
         listEl.appendChild(li);
+      });
+    }
+
+    // initialize controls state
+    function initControls() {
+      // filter
+      const btns = filterControl.querySelectorAll('button');
+      btns.forEach(b => {
+        b.classList.toggle('active', b.dataset.filter === filterMode);
+        b.addEventListener('click', () => {
+          btns.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          filterMode = b.dataset.filter;
+          localStorage.setItem('praise_filterMode', filterMode);
+          applyFiltersAndSearch(); renderList();
+        });
+      });
+
+      // sort
+      sortToggleBtn.setAttribute('aria-pressed', reverseOrder ? 'true' : 'false');
+      sortToggleBtn.addEventListener('click', () => {
+        reverseOrder = !reverseOrder;
+        localStorage.setItem('praise_reverseOrder', reverseOrder);
+        sortToggleBtn.setAttribute('aria-pressed', reverseOrder ? 'true' : 'false');
+        applyFiltersAndSearch(); renderList();
+      });
+
+      // search (debounced)
+      searchInput.value = searchQuery || '';
+      const doSearch = debounce(() => {
+        searchQuery = searchInput.value || '';
+        localStorage.setItem('praise_searchQuery', searchQuery);
+        applyFiltersAndSearch(); renderList();
+      }, 220);
+      searchInput.addEventListener('input', doSearch);
+      // keyboard shortcut: '/' focus
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/') { e.preventDefault(); searchInput.focus(); }
       });
     }
   
@@ -323,6 +428,7 @@
       }
     });
   
+    initControls();
     await loadList(currentDir);
   
     function escapeHtml(str) {
