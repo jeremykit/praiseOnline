@@ -9,5 +9,5 @@ preview_bucket_name = "__BUCKET_NAME__"
 
 # routes 应该在顶级配置中
 [[routes]]
-pattern = "__API_DOMAIN__/*"
+pattern = "__API_DOMAIN__"
 zone_name = "__ZONE_NAME__"
