@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>赞美诗播放器</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header>赞美诗播放器</header>
+
+  <div class="menu">
+    <button class="menu-btn active" data-dir="praise/附录/">附录</button>
+    <button class="menu-btn" data-dir="praise/大本/">大本</button>
+    <button class="menu-btn" data-dir="praise/新编/">新编</button>
+    <button class="menu-btn" data-dir="praise/少儿/">少儿</button>
+  </div>
+
+  <div class="container">
+    <audio id="player" preload="metadata"></audio>
+    <ul id="songList" class="song-list"></ul>
+  </div>
+
+  <!-- 底部悬浮播放栏 -->
+  <div class="mini-player" id="miniPlayer" style="display:none;">
+    <div class="mini-player-content">
+      <!-- 1. 最左边：播放模式 -->
+      <button class="control-btn play-mode-btn" id="playModeBtn" title="播放模式">
+        <svg class="mode-icon" viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;">
+          <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+        </svg>
+      </button>
+
+      <!-- 2. 中间：歌曲信息（滚动） -->
+      <div class="song-info-scroll">
+        <div class="song-info-content" id="songInfoContent">未播放</div>
+      </div>
+
+      <!-- 3. 播放按钮和进度 -->
+      <div class="play-control-wrapper">
+        <button class="play-pause-btn" id="playPauseBtn" title="播放/暂停">
+          <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+            <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+          </svg>
+        </button>
+        <div class="progress-ring">
+          <svg class="progress-svg" viewBox="0 0 36 36">
+            <circle class="progress-bg" cx="18" cy="18" r="16"></circle>
+            <circle class="progress-fill" cx="18" cy="18" r="16" stroke-dasharray="0 100"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 4. 最近播放列表按钮 -->
+      <button class="control-btn recent-list-btn" id="recentListBtn" title="最近播放">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;">
+          <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+        </svg>
+      </button>
+
+      <!-- 5. 定时播放按钮 -->
+      <button class="control-btn timer-btn" id="timerBtn" title="定时关闭">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 最近播放列表弹窗 -->
+    <div class="recent-list-panel" id="recentListPanel">
+      <div class="recent-list-header">
+        <h3>最近播放</h3>
+        <button class="close-btn" id="closeRecentBtn">×</button>
+      </div>
+      <ul class="recent-list" id="recentListItems"></ul>
+    </div>
+
+    <!-- 定时设置弹窗 -->
+    <div class="timer-panel" id="timerPanel">
+      <div class="timer-header">
+        <h3>定时关闭</h3>
+        <button class="close-btn" id="closeTimerBtn">×</button>
+      </div>
+      <div class="timer-content">
+        <div class="timer-options">
+          <button class="timer-option-btn" data-minutes="15">15分钟</button>
+          <button class="timer-option-btn" data-minutes="30">30分钟</button>
+          <button class="timer-option-btn" data-minutes="60">1小时</button>
+          <button class="timer-option-btn" data-minutes="90">1.5小时</button>
+        </div>
+        <div class="timer-status" id="timerStatus"></div>
+        <button class="timer-cancel-btn" id="cancelTimerBtn" style="display:none;">取消定时</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
