@@ -1,41 +1,65 @@
-/* Theme Variables and Styles */
+/* Theme Variables and Styles - Apple Music iOS Style */
 
 /* Light Theme (default) */
 :root,
 [data-theme="light"] {
-  --accent: #2563eb;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --muted: #6b7280;
-  --highlight: #dbeafe;
-  --text-primary: #111111;
-  --text-secondary: #666666;
-  --border: #e6e6e6;
+  --accent: #007AFF;
+  --accent-hover: #0051D5;
+  --bg-gradient-start: #E8F0FE;
+  --bg-gradient-end: #FFFFFF;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-hover: rgba(255, 255, 255, 0.8);
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-tertiary: rgba(0, 0, 0, 0.4);
+  --border: rgba(0, 0, 0, 0.1);
+  --highlight-bg: rgba(255, 204, 0, 0.3);
+  --player-bg: rgba(255, 255, 255, 0.85);
+  --header-bg: rgba(255, 255, 255, 0.8);
 }
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --accent: #3b82f6;
-  --bg: #1f2937;
-  --card: #374151;
-  --muted: #9ca3af;
-  --highlight: #1e3a8a;
-  --text-primary: #f3f4f6;
-  --text-secondary: #d1d5db;
-  --border: #4b5563;
+  --accent: #0A84FF;
+  --accent-hover: #409CFF;
+  --bg-gradient-start: #000000;
+  --bg-gradient-end: #1C1C1E;
+  --glass-bg: rgba(28, 28, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  --card-bg: rgba(28, 28, 30, 0.6);
+  --card-hover: rgba(44, 44, 46, 0.8);
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-tertiary: rgba(255, 255, 255, 0.4);
+  --border: rgba(255, 255, 255, 0.1);
+  --highlight-bg: rgba(255, 204, 0, 0.25);
+  --player-bg: rgba(28, 28, 30, 0.9);
+  --header-bg: rgba(28, 28, 30, 0.8);
   color-scheme: dark;
 }
 
 /* VS Code Dark Theme */
 [data-theme="code-dark"] {
-  --accent: #007acc;
-  --bg: #1e1e1e;
-  --card: #252526;
-  --muted: #858585;
-  --highlight: #264f78;
-  --text-primary: #d4d4d4;
-  --text-secondary: #9cdcfe;
-  --border: #3e3e42;
+  --accent: #007ACC;
+  --accent-hover: #1E90FF;
+  --bg-gradient-start: #1E1E1E;
+  --bg-gradient-end: #252526;
+  --glass-bg: rgba(37, 37, 38, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  --card-bg: rgba(37, 37, 38, 0.6);
+  --card-hover: rgba(45, 45, 48, 0.8);
+  --text-primary: #D4D4D4;
+  --text-secondary: rgba(212, 212, 212, 0.6);
+  --text-tertiary: rgba(212, 212, 212, 0.4);
+  --border: rgba(255, 255, 255, 0.1);
+  --highlight-bg: rgba(255, 204, 0, 0.25);
+  --player-bg: rgba(37, 37, 38, 0.9);
+  --header-bg: rgba(37, 37, 38, 0.8);
   color-scheme: dark;
 }
 
